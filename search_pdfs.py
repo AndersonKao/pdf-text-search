@@ -42,7 +42,7 @@ def get_all_subfolders(base_folder):
 
 def search_folder(folder_path, term, use_regex=False, context_window=None, print_pages=False):
     report = []
-    res = False
+    cnt = 0
     for root, _, files in os.walk(folder_path):
         for file in files:
             if file.lower().endswith(".pdf"):
@@ -50,7 +50,7 @@ def search_folder(folder_path, term, use_regex=False, context_window=None, print
                 # print(f"{full_path}")
                 results = search_pdf(full_path, term, use_regex, context_window)
                 if results:
-                    res = True
+                    cnt += len(results) 
                     print(f"\n📄 檔案: {full_path}")
                     print(f"🔍 共找到 {len(results)} 筆匹配")
                     if print_pages:
@@ -58,7 +58,7 @@ def search_folder(folder_path, term, use_regex=False, context_window=None, print
                             print(f"  ➤ 第 {page} 頁：『{match_text}』")
                             if context is not None:
                                 print(f"     ...{context}...")
-    return res
+    return cnt 
 
 def main():
     parser = argparse.ArgumentParser(description="搜尋 PDF 是否包含指定詞語、句子或句型")
@@ -76,13 +76,15 @@ def main():
     if not hasattr(args, "context"):
         print("ℹ️ 未指定 --context，將僅顯示匹配詞不含上下文。")
 
-    any_results = False 
+    result_cnt = 0
     for folder in folders_to_search:
-        if search_folder(folder, args.term, args.regex, context_window, print_pages):
-            any_results = True
+        result_cnt += search_folder(folder, args.term, args.regex, context_window, print_pages)
 
-    if not any_results:
+    if result_cnt == 0:
         print("❌ 沒有找到任何匹配項目。")
+    else:
+        print(f"找到 {result_cnt} 個匹配項目。")
+        
 
 if __name__ == "__main__":
     main()
