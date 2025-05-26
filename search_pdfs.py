@@ -40,16 +40,25 @@ def get_all_subfolders(base_folder):
             subfolders.append(os.path.join(root, d))
     return subfolders or [base_folder]
 
-def search_folder(folder_path, term, use_regex=False, context_window=None):
+def search_folder(folder_path, term, use_regex=False, context_window=None, print_pages=False):
     report = []
+    res = False
     for root, _, files in os.walk(folder_path):
         for file in files:
             if file.lower().endswith(".pdf"):
                 full_path = os.path.join(root, file)
+                # print(f"{full_path}")
                 results = search_pdf(full_path, term, use_regex, context_window)
                 if results:
-                    report.append((full_path, results))
-    return report
+                    res = True
+                    print(f"\n📄 檔案: {full_path}")
+                    print(f"🔍 共找到 {len(results)} 筆匹配")
+                    if print_pages:
+                        for page, match_text, context in results:
+                            print(f"  ➤ 第 {page} 頁：『{match_text}』")
+                            if context is not None:
+                                print(f"     ...{context}...")
+    return res
 
 def main():
     parser = argparse.ArgumentParser(description="搜尋 PDF 是否包含指定詞語、句子或句型")
@@ -67,22 +76,13 @@ def main():
     if not hasattr(args, "context"):
         print("ℹ️ 未指定 --context，將僅顯示匹配詞不含上下文。")
 
-    total_results = []
+    any_results = False 
     for folder in folders_to_search:
-        results = search_folder(folder, args.term, args.regex, context_window)
-        total_results.extend(results)
+        if search_folder(folder, args.term, args.regex, context_window, print_pages):
+            any_results = True
 
-    if not total_results:
+    if not any_results:
         print("❌ 沒有找到任何匹配項目。")
-    else:
-        for filepath, matches in total_results:
-            print(f"\n📄 檔案: {filepath}")
-            print(f"🔍 共找到 {len(matches)} 筆匹配")
-            if print_pages:
-                for page, match_text, context in matches:
-                    print(f"  ➤ 第 {page} 頁：『{match_text}』")
-                    if context is not None:
-                        print(f"     ...{context}...")
 
 if __name__ == "__main__":
     main()
