@@ -58,6 +58,7 @@ def search_folder(folder_path, term, use_regex=False, context_window=None, print
                             print(f"  ➤ 第 {page} 頁：『{match_text}』")
                             if context is not None:
                                 print(f"     ...{context}...")
+                    print(f"==================================================================")
     return cnt 
 
 def main():
