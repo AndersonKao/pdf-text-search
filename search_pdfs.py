@@ -66,7 +66,7 @@ def main():
     parser.add_argument("--term", required=True, help="要搜尋的詞語或句型")
     parser.add_argument("--regex", action="store_true", help="是否使用正則表達式")
     parser.add_argument("--printpages", action="store_true", help="是否列出頁碼")
-    parser.add_argument("--context", type=int, help="前後顯示幾個字元作為上下文", default=10)
+    parser.add_argument("--context", type=int, help="前後顯示幾個字元作為上下文", default=argparse.SUPPRESS)
     args = parser.parse_args()
 
     folders_to_search = [args.folder] if args.folder else get_all_subfolders(".")
