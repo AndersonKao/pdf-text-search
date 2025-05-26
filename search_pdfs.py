@@ -27,7 +27,7 @@ def search_pdf(pdf_path, term, use_regex=False, context_window=None):
         for m in matches:
             if context_window is not None:
                 #snippet = '\033[92m' + text[max(0, m.start()-context_window):m.end()+context_window].strip() + '\033[0m'
-                snippet = text[max(0, m.start()-context_window): m.start()] + '\033[92m' + text[m.start():m.end()].strip() + '\033[0m' + text[m.end():m.end()+context_window]
+                snippet = text[max(0, m.start()-context_window): m.start()] + '\033[31m' + text[m.start():m.end()].strip() + '\033[0m' + text[m.end():m.end()+context_window]
             else:
                 snippet = None
             results.append((page_num, m.group(0), snippet))
